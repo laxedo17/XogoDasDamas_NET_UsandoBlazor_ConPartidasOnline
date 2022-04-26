@@ -1,0 +1,43 @@
+.cell {
+    height: 80px;
+    width: 80px;
+    padding: 10px;
+    border: 1px solid black;
+}
+
+/*Colorea as celdas impares das filas pares*/
+.row:nth-child(2n) .cell:nth-child(2n+1) {
+    background: tan;
+}
+
+/*Colorea as celdas pares das filas pares*/
+.row:nth-child(2n) .cell:nth-child(2n) {
+    background: #eee;
+}
+
+/*Colorea as celdas impares das filas impares*/
+.row:nth-child(2n+1) .cell:nth-child(2n+1) {
+    background: #eee;
+}
+
+/*Colorea as celdas pares das filas impares*/
+.row:nth-child(2n+1) .cell:nth-child(2n) {
+    background: tan;
+}
+
+.dama {
+    /*o ancho e alto son menores que o ancho e algo dunha celda obviamente*/
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    /*convirte a peza nun circulo*/
+    border: 1px solid black;
+}
+
+.dama.negra {
+    background: black;
+}
+
+.dama.blanca {
+    background: white;
+}

@@ -1,0 +1,69 @@
+@using Damas.Client.Datos
+@code {
+    List<Dama> damasNegras = new List<Dama>();
+    List<Dama> damasBrancas = new List<Dama>();
+
+    protected override void OnInitialized()
+    {
+        // enchemos o taboleiro de damas
+
+        //neste bucle enchemos as 3 primeiras filas, as de arriba, fichas negras
+        for (int i = 0; i < 3; i++)
+        {
+            //1. No bucle for comprobamos que a primeira casilla sexa multiplo de 2 ou non
+            // segundo o valor de i. Por ex.se i e 0, a primeira fila, j non da 0
+            //se j e 1 o resto de % 2 non e cero, enton sabemos que o valor desa celda non e par
+            //cando pasa a seguinte fila, i e 1, e j pasa a ser 2 dividido entre 2 que da 0 de resto
+            //co cal ahi debuxa e vai debuxando unha ficha de 2 en 2 casillas
+            for (int j = (i + 1) % 2; j < 8; j += 2)
+            {
+                damasNegras.Add(new Dama
+                {
+                    Color = "negra",
+                    Columna = j,
+                    Fila = i,
+                    Direccion = DireccionDama.Abaixo
+                });
+            }
+        }
+
+        // con este bucle enchemos as filas da 5 a 8 con fichas blancas
+        for (int i = 5; i < 8; i++)
+        {
+            for (int j = (i + 1) % 2; j < 8; j += 2)
+            {
+                damasNegras.Add(new Dama
+                {
+                    Color = "blanca",
+                    Columna = j,
+                    Fila = i,
+                    Direccion = DireccionDama.Arriba
+                });
+            }
+        }
+
+    }
+
+}
+
+@for (int i = 0; i < 8; i++)
+{
+    <div class="row">
+        @for (int j = 0; j < 8; j++)
+        {
+            var dama = damasNegras.FirstOrDefault(n => n.Columna == j && n.Fila == i);
+
+            if (dama == null)
+            {
+                dama = damasBrancas.FirstOrDefault(n => n.Columna == j && n.Fila == i);
+            }
+
+            <div class="cell">
+                @if (dama != null)
+                {
+                    <div class="dama @dama.Color"></div>
+                }
+            </div>
+        }
+    </div>
+}
