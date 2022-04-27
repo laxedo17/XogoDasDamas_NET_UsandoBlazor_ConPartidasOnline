@@ -5,6 +5,10 @@
     border: 1px solid black;
 }
 
+.cell.activa {
+    border: 3px solid blue;
+}
+
 /*Colorea as celdas impares das filas pares*/
 .row:nth-child(2n) .cell:nth-child(2n+1) {
     background: tan;
@@ -34,8 +38,19 @@
     border: 1px solid black;
 }
 
+.dama.activa {
+    border: 3px solid teal;
+}
+
+.dama span {
+    text-align: center;
+    margin-top: 10px;
+    display: block;
+}
+
 .dama.negra {
     background: black;
+    color: white;
 }
 
 .dama.blanca {

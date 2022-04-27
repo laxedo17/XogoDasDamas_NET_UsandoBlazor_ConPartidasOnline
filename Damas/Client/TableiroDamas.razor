@@ -32,7 +32,7 @@
         {
             for (int j = (i + 1) % 2; j < 8; j += 2)
             {
-                damasNegras.Add(new Dama
+                damasBrancas.Add(new Dama
                 {
                     Color = "blanca",
                     Columna = j,
@@ -44,13 +44,99 @@
 
     }
 
+    void MoverDama(int fila, int columna)
+    {
+        bool podeMoverseAqui = celdasPosibles.Contains((fila, columna));
+        if (!podeMoverseAqui)
+        {
+            return;
+        }
+
+        damaActiva.Columna = columna;
+        damaActiva.Fila = fila;
+
+        if (damaActiva.Fila == 7 && damaActiva.Color == "negra")
+        {
+            damaActiva.Direccion = DireccionDama.Ambos;
+        }
+
+        if (damaActiva.Fila == 0 && damaActiva.Color == "blanca")
+        {
+            damaActiva.Direccion = DireccionDama.Ambos;
+        }
+
+        damaActiva = null;
+        turnoBlancas = !turnoBlancas;
+        EvaluarLugaresDama();
+    }
+
+    void EvaluarCasilla(int fila, int columna)
+    {
+        var damaNegra = damasNegras.FirstOrDefault(d => d.Columna == columna && d.Fila == fila);
+        var damaBlanca = damasBrancas.FirstOrDefault(d => d.Columna == columna && d.Fila == fila);
+
+        if (damaNegra == null && damaBlanca == null)
+        {
+            celdasPosibles.Add((fila, columna));
+        }
+    }
+
+    Dama damaActiva = null;
+    List<(int fila, int columna)> celdasPosibles = new(); //usamos un tuple
+
+    bool turnoBlancas = true;
+
+    void EvaluarLugaresDama()
+    {
+        //usamos Clear() dunha List porque se non o facemos
+        //imos a ter moitisimas filas posibles por cada dama diferente que pulsemos
+        //xa que as de damas anteriores non desaparecen da pantalla
+        celdasPosibles.Clear();
+
+        if (damaActiva != null)
+        {
+            List<int> filasPosibles = new List<int>();
+            if (damaActiva.Direccion == DireccionDama.Abaixo || damaActiva.Direccion == DireccionDama.Ambos)
+            {
+                filasPosibles.Add(damaActiva.Fila + 1);
+            }
+
+            if (damaActiva.Direccion == DireccionDama.Arriba || damaActiva.Direccion == DireccionDama.Ambos)
+            {
+                filasPosibles.Add(damaActiva.Fila - 1);
+            }
+
+            foreach (var fila in filasPosibles)
+            {
+                EvaluarCasilla(fila, damaActiva.Columna - 1);
+                EvaluarCasilla(fila, damaActiva.Columna + 1);
+            }
+        }
+    }
+
+    void FacerClickEnDama(Dama dama)
+    {
+        if (turnoBlancas && dama.Color == "negra")
+        {
+            return;
+        }
+        if (!turnoBlancas && dama.Color == "blanca")
+        {
+            return;
+        }
+        damaActiva = dama;
+        EvaluarLugaresDama();
+    }
 }
 
 @for (int i = 0; i < 8; i++)
 {
+    int iLocal = i;
+
     <div class="row">
         @for (int j = 0; j < 8; j++)
         {
+            int jLocal = j;
             var dama = damasNegras.FirstOrDefault(n => n.Columna == j && n.Fila == i);
 
             if (dama == null)
@@ -58,10 +144,14 @@
                 dama = damasBrancas.FirstOrDefault(n => n.Columna == j && n.Fila == i);
             }
 
-            <div class="cell">
+            bool podeMoverseAqui = celdasPosibles.Contains((i, j));
+
+            <div @onclick="() => MoverDama(iLocal,jLocal)" class="cell @(podeMoverseAqui ? "activa" : "")">
                 @if (dama != null)
                 {
-                    <div class="dama @dama.Color"></div>
+                    <div @onclick="() => FacerClickEnDama(dama)" class="dama @dama.Color @(dama == damaActiva? "activa": "")">
+                        <span>@(dama.Direccion==DireccionDama.Ambos ? "R" : "")</span>
+                    </div>
                 }
             </div>
         }
