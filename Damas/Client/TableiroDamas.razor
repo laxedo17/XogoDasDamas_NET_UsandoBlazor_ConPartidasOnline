@@ -52,6 +52,27 @@
             return;
         }
 
+        if (Math.Abs(damaActiva.Columna - columna) == 2)
+        {
+            //confirmado que saltamos algunha ficha
+            int columnaSaltada = (damaActiva.Columna + columna) / 2;
+            int filaSaltada = (damaActiva.Fila + fila) / 2;
+
+            var damaNegra = damasNegras.FirstOrDefault(
+            d => d.Fila == filaSaltada && d.Columna == columnaSaltada);
+            if (damaNegra != null)
+            {
+                damasNegras.Remove(damaNegra);
+            }
+
+            var damaBlanca = damasBrancas.FirstOrDefault(
+            d => d.Fila == filaSaltada && d.Columna == columnaSaltada);
+            if (damaBlanca != null)
+            {
+                damasBrancas.Remove(damaBlanca);
+            }
+        }
+
         damaActiva.Columna = columna;
         damaActiva.Fila = fila;
 
@@ -70,7 +91,7 @@
         EvaluarLugaresDama();
     }
 
-    void EvaluarCasilla(int fila, int columna)
+    void EvaluarCasilla(int fila, int columna, bool primeiraVez = true)
     {
         var damaNegra = damasNegras.FirstOrDefault(d => d.Columna == columna && d.Fila == fila);
         var damaBlanca = damasBrancas.FirstOrDefault(d => d.Columna == columna && d.Fila == fila);
@@ -78,6 +99,19 @@
         if (damaNegra == null && damaBlanca == null)
         {
             celdasPosibles.Add((fila, columna));
+        }
+        else if (primeiraVez)
+        {
+            //comproba se podemos saltar unha das damas
+            if ((turnoBlancas && damaNegra != null) || (!turnoBlancas && damaBlanca != null))
+            {
+                int diferenciaColumnas = columna - damaActiva.Columna;
+
+                int diferenciaFilas = fila - damaActiva.Fila;
+
+                EvaluarCasilla(fila + diferenciaFilas, columna + diferenciaColumnas, false);
+            }
+
         }
     }
 
